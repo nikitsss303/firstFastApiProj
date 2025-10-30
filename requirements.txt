@@ -1,4 +1,4 @@
-fastapi[standart]
+fastapi[standard]
 sqlalchemy
 dotenv
 alembic
