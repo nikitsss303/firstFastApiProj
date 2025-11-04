@@ -8,13 +8,17 @@ from sqlalchemy.orm import Session
 
 from app.config.database import SessionLocal
 from app.controllers.users import UserController 
-from app.models.users import User
 import app.schemas.users as user_schemas 
 
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/users'
+)
+
+
 user_controller = UserController()
+
 
 def get_db():
     db = SessionLocal()
@@ -24,12 +28,7 @@ def get_db():
         db.close()
 
 
-@router.get('/')
-async def greetings():
-    return {'Hello':'Everybody'}
-
-
-@router.get('/users')
+@router.get('')
 async def get_users(
     db: Session = Depends(get_db),
     response: Response = None
@@ -41,7 +40,7 @@ async def get_users(
     return result
 
 
-@router.get('/users/id', response_model=user_schemas.UserReadSchema)
+@router.get('/id', response_model=user_schemas.UserReadSchema)
 async def get_user_by_id(
     user_id: int,
     db: Session = Depends(get_db)
@@ -58,7 +57,7 @@ async def get_user_by_id(
     return result
 
 
-@router.get('/users/name/{user_name}')
+@router.get('/name')
 async def get_users_by_name(
     user_name: str,
     db: Session = Depends(get_db)
@@ -76,13 +75,14 @@ async def get_users_by_name(
     return result
 
 
-@router.post('/users/create/{user_name}', response_model=user_schemas.UserCreateSchema)
+@router.post('/create', response_model=user_schemas.UserCreateSchema)
 async def create_users(
     user: user_schemas.UserCreateSchema,
-    user_name: str,
     db: Session = Depends(get_db)
 ):
-    user.name = user_name
+    # user.name = user_name
+    # user.surname = user_surname
+
     result = user_controller.create_user(db=db, user=user)
     if not result:
         raise HTTPException(
@@ -97,14 +97,17 @@ async def create_users(
     return result
 
 
-@router.put('/users/change', response_model=user_schemas.UserUpdateSchema)
+@router.put('/change', response_model=user_schemas.UserUpdateSchema)
 async def update_users_by_id(
     user_id: int,
     user_name: str,
+    user_surname: str,
     user: user_schemas.UserUpdateSchema,
     db: Session = Depends(get_db)
 ):
     user.name = user_name
+    user.surname = user_surname
+
     result = user_controller.update_user(db=db, user_id=user_id, user=user)
 
     if result:
@@ -113,7 +116,7 @@ async def update_users_by_id(
     return update_user
 
 
-@router.delete('/users/delete/{user_id}')
+@router.delete('/delete')
 async def delete_users_by_id(
     user_id: int,
     db: Session = Depends(get_db)

@@ -10,6 +10,7 @@ class User(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
+    surname: Mapped[str] = mapped_column(String(50))
 
     def __repr__(self) -> str:
-        return f"{self.name} with id = {self.id}"
+        return f"{self.name} {self.surname} with id = {self.id}"

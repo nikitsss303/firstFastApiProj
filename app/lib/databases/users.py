@@ -21,7 +21,7 @@ def create_user(
         user: schemas_user.UserCreateSchema
     ):
     
-    db_user = user_model.User(name = user.name)
+    db_user = user_model.User(name = user.name, surname = user.surname  )
 
     db.add(db_user)
     db.commit()
@@ -36,7 +36,10 @@ def update_user(
         user: schemas_user.UserUpdateSchema
     ):
     
-    db.query(user_model.User).filter(user_model.User.id == user_id).update({user_model.User.name: user.name})
+    db.query(user_model.User).filter(user_model.User.id == user_id).update({
+        user_model.User.name: user.name, 
+        user_model.User.surname: user.surname
+        })
     db.commit()
     return True
 
